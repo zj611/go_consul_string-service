@@ -68,5 +68,6 @@ func (s StringService) HealthCheck() bool {
 	return true
 }
 
+//装饰器模式定义日志中间件
 // ServiceMiddleware define service middleware
 type ServiceMiddleware func(Service) Service

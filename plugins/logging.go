@@ -8,6 +8,7 @@ import (
 
 // loggingMiddleware Make a new type
 // that contains Service interface and logger instance
+//装饰器模式，对service进行装饰
 type loggingMiddleware struct {
 	service.Service
 	logger log.Logger
@@ -30,7 +31,7 @@ func (mw loggingMiddleware) Concat(a, b string) (ret string, err error) {
 			"result", ret,
 			"took", time.Since(begin),
 		)
-	}(time.Now())
+	}(time.Now()) //调用匿名函数
 
 	ret, err = mw.Service.Concat(a, b)
 	return ret, err
@@ -63,5 +64,3 @@ func (mw loggingMiddleware) HealthCheck() (result bool) {
 	result = mw.Service.HealthCheck()
 	return
 }
-
-

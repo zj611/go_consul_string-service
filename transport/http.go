@@ -13,6 +13,9 @@ import (
 	"net/http"
 )
 
+//transport层目的：将http请求中的参数封装为对应的request请求，传递给endpoint执行，
+//并将endpoint返回的response结构体编码为对应的http响应返回
+
 var (
 	ErrorBadRequest = errors.New("invalid request parameter")
 )

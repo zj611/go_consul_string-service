@@ -8,12 +8,14 @@ import (
 	"strings"
 )
 
+//将来自transport层的request结构体转为合适的请求参数，传递给service层执行，
+//并将执行结果封装成对应的response返给transport层
+
 // StringEndpoint define endpoint
 type StringEndpoints struct {
 	StringEndpoint      endpoint.Endpoint
 	HealthCheckEndpoint endpoint.Endpoint
 }
-
 
 var (
 	ErrInvalidRequestType = errors.New("RequestType has only two type: Concat, Diff")
