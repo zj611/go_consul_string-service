@@ -37,7 +37,6 @@ func (mw StringServiceWithLogging) Concat(a, b string) (ret string, err error) {
 	}(time.Now()) //调用匿名函数
 
 	ret, err = mw.Service.Concat(a, b)
-
 	return ret, err
 }
 
