@@ -1,6 +1,7 @@
 package discover
 
 import (
+	"fmt"
 	"github.com/go-kit/kit/sd/consul"
 	"github.com/hashicorp/consul/api"
 	"github.com/hashicorp/consul/api/watch"
@@ -8,6 +9,7 @@ import (
 	"strconv"
 	"sync"
 )
+
 // 注意：此方法是借助Go-kit服务注册与发现包 和consul进行交互
 type KitDiscoverClient struct {
 	Host   string // Consul Host
@@ -15,13 +17,14 @@ type KitDiscoverClient struct {
 	client consul.Client
 	// 连接 consul 的配置
 	config *api.Config
-	mutex sync.Mutex
+	mutex  sync.Mutex
 	// 服务实例缓存字段
 	instancesMap sync.Map
 }
 
 func NewKitDiscoverClient(consulHost string, consulPort int) (DiscoveryClient, error) {
 	// 通过 Consul Host 和 Consul Port 创建一个 consul.Client
+
 	consulConfig := api.DefaultConfig()
 	consulConfig.Address = consulHost + ":" + strconv.Itoa(consulPort)
 	apiClient, err := api.NewClient(consulConfig)
@@ -32,29 +35,38 @@ func NewKitDiscoverClient(consulHost string, consulPort int) (DiscoveryClient, e
 	return &KitDiscoverClient{
 		Host:   consulHost,
 		Port:   consulPort,
-		config:consulConfig,
+		config: consulConfig,
 		client: client,
 	}, err
 }
 
-func (consulClient *KitDiscoverClient) Register(serviceName, instanceId, healthCheckUrl string, instanceHost string, instancePort int, meta map[string]string, logger *log.Logger) bool {
+func (consulClient *KitDiscoverClient) Register(serviceName, instanceId,
+	healthCheckUrl string, instanceHost string,
+	instancePort int, meta map[string]string, logger *log.Logger) bool {
 
 	// 1. 构建服务实例元数据
 	serviceRegistration := &api.AgentServiceRegistration{
+
 		ID:      instanceId,
 		Name:    serviceName,
 		Address: instanceHost,
 		Port:    instancePort,
 		Meta:    meta,
 		Check: &api.AgentServiceCheck{
-			DeregisterCriticalServiceAfter: "30s",
-			HTTP:                           "http://" + instanceHost + ":" + strconv.Itoa(instancePort) + healthCheckUrl,
-			Interval:                       "15s",
+
+			//DeregisterCriticalServiceAfter: "1s",
+			//HTTP:                           "http://" + instanceHost + ":" + strconv.Itoa(instancePort) + healthCheckUrl,
+			//Interval:                       "3s",
+
+			DeregisterCriticalServiceAfter: "150s",
+			HTTP:                           "http://host.docker.internal:" + strconv.Itoa(instancePort) + healthCheckUrl,
+			Interval:                       "30s",
 		},
 	}
 
 	// 2. 发送服务注册到 Consul 中
 	err := consulClient.client.Register(serviceRegistration)
+	fmt.Println(serviceRegistration.Check.HTTP)
 
 	if err != nil {
 		log.Println("Register Service Error!")

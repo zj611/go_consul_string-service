@@ -19,13 +19,14 @@ import (
 )
 
 func main() {
-
 	// 获取命令行参数
 	var (
-		servicePort = flag.Int("service.port", 10085, "service port")
+		servicePort = flag.Int("service.port", 8399, "service port")
 		serviceHost = flag.String("service.host", "127.0.0.1", "service host")
+
 		consulPort = flag.Int("consul.port", 8500, "consul port")
 		consulHost = flag.String("consul.host", "127.0.0.1", "consul host")
+
 		serviceName = flag.String("service.name", "string", "service name")
 	)
 
@@ -36,22 +37,21 @@ func main() {
 	var discoveryClient discover.DiscoveryClient
 	discoveryClient, err := discover.NewKitDiscoverClient(*consulHost, *consulPort)
 
-	if err != nil{
+	if err != nil {
 		config.Logger.Println("Get Consul Client failed")
 		os.Exit(-1)
-
 	}
 	var svc service.Service
 	svc = service.StringService{}
 	// add logging middleware
 	svc = plugins.LoggingMiddleware(config.KitLogger)(svc)
 
+	//创建字符串操作的Endpoint
 	stringEndpoint := endpoint.MakeStringEndpoint(svc)
-
 	//创建健康检查的Endpoint
 	healthEndpoint := endpoint.MakeHealthCheckEndpoint(svc)
 
-	//把算术运算Endpoint和健康检查Endpoint封装至StringEndpoints
+	//把字符串操作Endpoint和健康检查Endpoint封装至StringEndpoints
 	endpts := endpoint.StringEndpoints{
 		StringEndpoint:      stringEndpoint,
 		HealthCheckEndpoint: healthEndpoint,
@@ -67,15 +67,15 @@ func main() {
 
 		config.Logger.Println("Http Server start at port:" + strconv.Itoa(*servicePort))
 		//启动前执行注册
-		if !discoveryClient.Register(*serviceName, instanceId, "/health", *serviceHost,  *servicePort, nil, config.Logger){
+		if !discoveryClient.Register(*serviceName, instanceId, "/health", *serviceHost, *servicePort, nil, config.Logger) {
 			config.Logger.Printf("string-service for service %s failed.", serviceName)
 			// 注册失败，服务启动失败
 			os.Exit(-1)
 		}
 		handler := r
-		errChan <- http.ListenAndServe(":"  + strconv.Itoa(*servicePort), handler)
+		errChan <- http.ListenAndServe(":"+strconv.Itoa(*servicePort), handler)
 	}()
-
+	//监控系统ctrl+c关闭命令
 	go func() {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)

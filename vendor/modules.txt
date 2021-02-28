@@ -26,6 +26,7 @@ github.com/golang/protobuf/ptypes/timestamp
 ## explicit
 github.com/gorilla/mux
 # github.com/hashicorp/consul/api v1.3.0
+## explicit
 github.com/hashicorp/consul/api
 github.com/hashicorp/consul/api/watch
 # github.com/hashicorp/go-cleanhttp v0.5.1
@@ -40,13 +41,6 @@ github.com/hashicorp/golang-lru/simplelru
 github.com/hashicorp/serf/coordinate
 # github.com/longjoy/micro-go-book v0.0.0-20200708135127-65869c7c385a
 ## explicit
-github.com/longjoy/micro-go-book/ch10-resiliency/string-service/service
-github.com/longjoy/micro-go-book/ch6-discovery/string-service/config
-github.com/longjoy/micro-go-book/ch6-discovery/string-service/endpoint
-github.com/longjoy/micro-go-book/ch6-discovery/string-service/plugins
-github.com/longjoy/micro-go-book/ch6-discovery/string-service/service
-github.com/longjoy/micro-go-book/ch6-discovery/string-service/transport
-github.com/longjoy/micro-go-book/common/discover
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
 # github.com/mitchellh/go-homedir v1.1.0

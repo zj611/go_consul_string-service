@@ -42,6 +42,7 @@ func (s StringService) Concat(a, b string) (string, error) {
 }
 
 func (s StringService) Diff(a, b string) (string, error) {
+
 	if len(a) < 1 || len(b) < 1 {
 		return "", nil
 	}
